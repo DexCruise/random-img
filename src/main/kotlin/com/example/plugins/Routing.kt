@@ -1,10 +1,8 @@
 package com.example.plugins
 
 import io.ktor.server.routing.*
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.server.request.*
 import java.io.File
 import java.util.Random
 
@@ -24,7 +22,7 @@ fun Application.configureRouting() {
 }
 
 object Images {
-    var images: Array<File> = File(File("config").readText()).listFiles()!!
+    var images: Array<File> = File("images").listFiles()!!
 }
 
 fun randomImage(): Int {
