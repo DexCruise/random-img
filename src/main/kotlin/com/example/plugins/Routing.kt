@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.plugins.Images.getImg
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -12,9 +13,14 @@ fun Application.configureRouting() {
         get("/") {
             val bus = call.parameters["i"]
             if (bus == null) {
-                call.respondRedirect(permanent = false, url="/?i=" + randomImage())
-            }
-            if (bus != null) {
+                val id = randomImage()
+                val author = getImg(id)?.name?.replace(Regex("\\s+\\(.*\\)"), "")
+                call.respondText(
+                    """{
+                    |   "location": "/?i=$id",
+                    |   "author": "$author"
+                    |}""".trimMargin())
+            } else {
                 call.respondFile(Images.images[bus.toInt()])
             }
         }
@@ -22,7 +28,11 @@ fun Application.configureRouting() {
 }
 
 object Images {
-    var images: Array<File> = File("images").listFiles()!!
+    val images: Array<File> = File("images").listFiles()!!
+    fun getImg(n: Int): File? {
+        return if (n >= images.size) null
+        else images[n]
+    }
 }
 
 fun randomImage(): Int {
