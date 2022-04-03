@@ -15,7 +15,7 @@ fun Application.configureRouting() {
 
             if (bus == null) {
                 val id = randomImage()
-                val author = getImg(id)?.name?.replace(Regex("\\s+\\(.*\\)"), "")
+                val author = getImg(id)?.name?.replace(Regex("\\s+\\(.*\\)"), "")?.replace(Regex("\\.[a-zA-Z]+$"), "")
                 call.respondText(
                     """{
                     |   "location": "/?i=$id",
