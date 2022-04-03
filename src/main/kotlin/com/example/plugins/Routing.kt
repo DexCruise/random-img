@@ -35,7 +35,10 @@ fun Application.configureRouting() {
                 val id = randomImage()
                 call.respondRedirect("/web?i=$id", permanent = false)
             } else {
-                call.respondFile(Images.images[bus.toInt()])
+                if (ApiKeys.contains(call.parameters["apiKey"] ?: "\n")) // set will never contain a newline
+                    call.respondFile(Images.images[bus.toInt()])
+                else
+                    call.respondText("an api key is required")
             }
         }
     }
@@ -44,19 +47,24 @@ fun Application.configureRouting() {
 object Images {
     val images: Array<File> = File("images").listFiles()!!
     fun getImg(n: Int): File? {
-        return if (n >= images.size) null
-        else images[n]
+        return images.getOrNull(n)
+
     }
 }
 
 object ApiKeys {
-    val keys: HashSet<String> = run {
+    val keys = run {
         val s = HashSet<String>()
         s.addAll(File("api_keys").readLines())
         s
+    }
+
+    fun contains(s: String): Boolean {
+        return keys.contains(s)
     }
 }
 
 fun randomImage(): Int {
     return Random().nextInt(Images.images.size)
 }
+
