@@ -22,7 +22,10 @@ fun Application.configureRouting() {
                     |   "author": "$author"
                     |}""".trimMargin())
             } else {
-                call.respondFile(Images.images[bus.toInt()])
+                if (ApiKeys.keys.contains(call.parameters["apiKey"]))
+                    call.respondFile(Images.images[bus.toInt()])
+                else
+                    call.respondText("an api key is required")
             }
         }
         get("/web") {
@@ -43,6 +46,14 @@ object Images {
     fun getImg(n: Int): File? {
         return if (n >= images.size) null
         else images[n]
+    }
+}
+
+object ApiKeys {
+    val keys: HashSet<String> = run {
+        val s = HashSet<String>()
+        s.addAll(File("api_keys").readLines())
+        s
     }
 }
 
