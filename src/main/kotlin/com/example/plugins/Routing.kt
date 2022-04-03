@@ -12,6 +12,7 @@ fun Application.configureRouting() {
     routing {
         get("/") {
             val bus = call.parameters["i"]
+
             if (bus == null) {
                 val id = randomImage()
                 val author = getImg(id)?.name?.replace(Regex("\\s+\\(.*\\)"), "")
@@ -20,6 +21,16 @@ fun Application.configureRouting() {
                     |   "location": "/?i=$id",
                     |   "author": "$author"
                     |}""".trimMargin())
+            } else {
+                call.respondFile(Images.images[bus.toInt()])
+            }
+        }
+        get("/web") {
+            val bus = call.parameters["i"]
+
+            if (bus == null) {
+                val id = randomImage()
+                call.respondRedirect("/web?i=$id", permanent = false)
             } else {
                 call.respondFile(Images.images[bus.toInt()])
             }
